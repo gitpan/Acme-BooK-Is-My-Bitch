@@ -1,4 +1,7 @@
 package Acme::BooK::Is::My::Bitch;
+{
+  $Acme::BooK::Is::My::Bitch::VERSION = '0.03';
+}
 
 use 5.006;
 use warnings;
@@ -6,84 +9,78 @@ use strict;
 
 use Acme::MetaSyntactic;
 
-our $VERSION = '0.02';
-
 # ###### Implementation ###########
 
-sub new {
-    my $self = shift;
+sub new { shift }
 
-    my $object = {};
-
-    return bless $object, $self;
-}
+my $de_underscore = sub { map { y/_/ /; $_ } @_ };
 
 my %methods = (
     'tell_the_truth' => [
         'You know, my favorite pornstar is definitely %s.',
-        'pornstars', 1
+        'pornstars', $de_underscore
     ],
     'thats_nothing' => [
         'Oh, that\'s nothing! You should\'ve seen what I auctioned in %s!',
-        'yapc', 1
+        'yapc', $de_underscore
     ],
     'code' => [
         'You know, I wrote some code for the %s space mission, but it was rejected for its lack of clarity...',
-        'space_missions', 1
+        'space_missions', $de_underscore
     ],
     'next_talk' => [
         'My next lightning talk will be called "%s! %s!! %s!!!"',
-        'batman', 3
+        'batman', sub { map { y/_/-/; ucfirst } @_ }
     ],
     'next_yapc' => [
          'I think the next YAPC should be on %s!',
-         'planets', 1 ],
+         'planets', ],
     'sql' => [
          'I think we can solve that with a %s %s %s',
-         'sql', 3 ],
+         'sql', ],
     'twisted_perl' => [
         'I\'m pretty sure I could do that just by using %s and %s',
-        'opcodes', 2
+        'opcodes',
     ],
     'words_of_wisdom' => [
         'My grandfather once told me: ' . join( " ", ('%s') x 7 ),
-        'loremipsum', 7
+        'loremipsum',
     ],
 );
 
 for my $method ( keys %methods ) {
-    my ( $template, $theme, $qty ) = @{ $methods{$method} };
+    my ( $template, $theme, $filter ) = @{ $methods{$method} };
+    $filter ||= sub {@_};
+    my $qty =()= $template =~ /%s/g;
     no strict 'refs';
-    *{$method}
-        = sub { return sprintf( $template, metaname( $theme => $qty ) ) };
+    *{$method} = sub {
+        return sprintf $template, $filter->( metaname( $theme => $qty ) );
+    };
 }
+
+sub available_quotes { return sort keys %methods }
 
 sub random_quote {
     my $self = shift;
-
-    no strict 'refs';
-
-    my @methods = (
-        grep { !/^(?:_.*|BEGIN|metaname|new)$/ }
-            keys %{"Acme::BooK::Is::My::Bitch::"}
-    );
-
-    my $method = $methods[ rand @methods ];
-
+    my $method  = (keys %methods)[ rand keys %methods ];
     return $self->$method();
 }
 
 1;    # Magic true value required at end of module
 
-__END__
+
+
+=pod
+
+=encoding iso-8859-1
 
 =head1 NAME
 
-Acme-BooK-Is-My-Bitch - BooK is my Bitch
+Acme::BooK::Is::My::Bitch - BooK is my Bitch
 
 =head1 VERSION
 
-This document describes Acme-BooK-Is-My-Bitch version 0.02.
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -106,7 +103,7 @@ Cog asked if the module had to exist by that time, and BooK said "No."
 
 BIG MISTAKE!
 
-=head1 INTERFACE 
+=head1 INTERFACE
 
 =head2 Program Interface
 
@@ -115,6 +112,15 @@ BIG MISTAKE!
 Creates a new Acme::BooK::Is::My::Bitch object.
 
     my $bitch = Acme::BooK::Is::My::Bitch->new();
+
+Since all methods are actually class methods, the following line
+is exactly equivalent to the above one (and shorter!):
+
+    my $bitch = 'Acme::BooK::Is::My::Bitch';
+
+=head3 available_quotes
+
+Returns the list of available quote methods.
 
 =head2 Module Interface
 
@@ -144,7 +150,7 @@ BooK claims he's not an SQL guru.
 
 =head3 tell_the_truth
 
-BooK has the pornstars theme on Acme::MetaSyntactic. There must be a reason.
+BooK has the pornstars theme on L<Acme::MetaSyntactic>. There must be a reason.
 
     my $tell_the_truth_quote = $bitch->tell_the_truth();
 
@@ -178,17 +184,18 @@ Acme-BooK-Is-My-Bitch requires no configuration files or environment variables.
 
 =head1 DEPENDENCIES
 
-=over 
+=over
 
 =item *
 
-Acme::MetaSyntactic
+L<Acme::MetaSyntactic>,
+L<Acme::MetaSyntactic::Themes>.
 
 =back
 
 =head1 FUTURE
 
-=over 
+=over
 
 =item *
 
@@ -202,31 +209,64 @@ None reported.
 
 =head1 BUGS AND LIMITATIONS
 
-No bugs have been reported.
+All reported bugs have been fixed, all requested features have been added.
 
 =head1 AUTHOR
 
-Jose Castro  C<< <cog@cpan.org> >>
+José Castro  C<< <cog@cpan.org> >>
+
+=head1 MAINTAINER
+
+Philippe Bruhat (BooK) C<< <book@cpan.org> >>
 
 =head1 ACKNOWLEDGEMENTS
 
 BooK actually wrote part of the code for this module and suggested
 some of the ideas that were turned into methods.
 
-This module is not about Cog mocking BooK; it's rather about Cog *and*
+This module is not about Cog mocking BooK; it's rather about Cog B<and>
 BooK making fun of themselves.
 
 We spent a very funny afternoon in a mini-hackathon in Birmingham
 starting up this module. We finished its first version while at the
 Old Joint pub with some more YAPC attendees.
 
+=head1 $_ IS MY BITCH
+
+The phrase "I<...> is my bitch" has been thrown around a lot during past
+YAPC Europe conferences. This tradition has thankfully been lost, but some
+artifacts remain:
+
+=over 4
+
+=item L<http://perl.ismybit.ch/>
+
+The T-shirt that started it all when the first YAPC Europe was organized,
+back in 2000.
+
+=item L<http://schwern.ismybit.ch/>
+
+Schwern worked for Belfast.pm, and all he got was this lousy T-shirt.
+One of those shirts was auctioned at the Amsterdam YAPC in 2001.
+
+=item L<http://greg.mccarroll.ismybit.ch/>
+
+Dave Cross bought an obfuscation by BooK at the Amsterdam YAPC auction.
+The code was revelead during the Paris YAPC auction in 2003, and the
+crowd bid (and won) against Greg to see it run.
+
+=item L<http://book.ismybit.ch/>
+
+The temporary tatoo alluded to above, at the Vienna YAPC in 2007.
+
+=back
+
 =head1 LICENCE AND COPYRIGHT
 
-Copyright (c) 2005, Jose Castro C<< <cog@cpan.org> >>. All rights reserved.
+Copyright (c) 2006, Jose Castro C<< <cog@cpan.org> >>. All rights reserved.
 
 This module is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
-
 
 =head1 DISCLAIMER OF WARRANTY
 
@@ -250,4 +290,11 @@ RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
 FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER SOFTWARE), EVEN IF
 SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGES.
+
+=cut
+
+
+__END__
+
+# ABSTRACT: BooK is my Bitch
 

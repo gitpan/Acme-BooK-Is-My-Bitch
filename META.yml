@@ -1,11 +1,25 @@
-# http://module-build.sourceforge.net/META-spec.html
-#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
-name:         Acme-BooK-Is-My-Bitch
-version:      0.02
-version_from: lib/Acme/BooK/Is/My/Bitch.pm
-installdirs:  site
+---
+abstract: 'BooK is my Bitch'
+author:
+  - 'José Castro'
+build_requires:
+  Test::More: 0.88
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300020, CPAN::Meta::Converter version 2.120921'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Acme-BooK-Is-My-Bitch
 requires:
-    Acme::MetaSyntactic:           0.89
-
-distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.17
+  Acme::MetaSyntactic: 0
+  Acme::MetaSyntactic::Themes: 1.000
+  perl: 5.006
+  strict: 0
+  warnings: 0
+resources:
+  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Acme-BooK-Is-My-Bitch
+  repository: http://github.com/book/Acme-BooK-Is-My-Bitch.git
+version: 0.03
