@@ -1,6 +1,6 @@
 package Acme::BooK::Is::My::Bitch;
 {
-  $Acme::BooK::Is::My::Bitch::VERSION = '0.03';
+  $Acme::BooK::Is::My::Bitch::VERSION = '0.04';
 }
 
 use 5.006;
@@ -46,6 +46,13 @@ my %methods = (
         'My grandfather once told me: ' . join( " ", ('%s') x 7 ),
         'loremipsum',
     ],
+    ( # quotes that need a theme/category
+        'baby_girl' => [
+            'You know we considered naming our baby girl %s?',
+            'pornstars/female',
+            sub { ( my $baby = shift ) =~ s/_.*$//; $baby }
+        ],
+    )x!! ( $Acme::MetaSyntactic::VERSION >= 1.011 ),
 );
 
 for my $method ( keys %methods ) {
@@ -80,7 +87,7 @@ Acme::BooK::Is::My::Bitch - BooK is my Bitch
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -123,6 +130,12 @@ is exactly equivalent to the above one (and shorter!):
 Returns the list of available quote methods.
 
 =head2 Module Interface
+
+=head3 baby_girl
+
+BooK has no imagination for naming his kids.
+
+    my $baby_girl_quote = $bitch->baby_girl();
 
 =head3 code
 

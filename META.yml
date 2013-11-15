@@ -22,4 +22,4 @@ requires:
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Acme-BooK-Is-My-Bitch
   repository: http://github.com/book/Acme-BooK-Is-My-Bitch.git
-version: 0.03
+version: 0.04
